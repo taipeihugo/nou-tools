@@ -1,3 +1,42 @@
+=== ddd architecture rules ===
+
+# Domain-Driven Design (DDD) Architecture
+
+This project follows a DDD architecture with Actions, ViewModels, and DTOs. Business logic lives in `src/Domains/` (namespace `NouTools\`); Laravel infrastructure stays in `app/`.
+
+## Request Flow
+
+```
+Request → DTO (validates) → Controller → Action → ViewModel → Response
+```
+
+## Core Rules
+
+- **DTOs** (`src/Domains/{Domain}/DataTransferObjects/`): Extend `Spatie\LaravelData\Data`. Final. Validation via PHP attributes. Named `XxxDTO`.
+- **Actions** (`src/Domains/{Domain}/Actions/`): Final readonly invokable classes. All business logic. Use `DB::transaction()` for multi-step writes. Use `saveOrFail()`. Named with a verb: `CreatePost`, `ListPosts`.
+- **ViewModels** (`src/Domains/{Domain}/ViewModels/`): Extend `Spatie\LaravelData\Resource`. Final. Use `Lazy` for optional relationships. Named `XxxViewModel`.
+- **Controllers** (`app/Http/Controllers/`): Thin orchestrators only — no business logic. Wire DTO → Action → ViewModel.
+- **Models** (`app/Models/`): Expose `fillFromDTO()` for explicit attribute mapping. No mass assignment.
+
+## Directory Layout
+
+```
+src/Domains/{Domain}/
+├── Actions/
+├── DataTransferObjects/
+├── ViewModels/
+└── QueryFilters/
+```
+
+## When to Create Each
+
+| File        | Create when…                                |
+| ----------- | ------------------------------------------- |
+| DTO         | New endpoint receives user input            |
+| Action      | Any business logic, even a single DB write  |
+| ViewModel   | Endpoint returns structured data            |
+| QueryFilter | List endpoint has multiple optional filters |
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
