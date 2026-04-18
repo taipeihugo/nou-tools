@@ -8,3 +8,5 @@
 /package-lock.json
 /yarn.lock
 /tests/fixtures
+
+/resources/views/components/icon-app-store-download.blade.php
