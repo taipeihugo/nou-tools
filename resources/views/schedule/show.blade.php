@@ -155,6 +155,8 @@
 
         <x-greeting class="mb-4 print:hidden" />
 
+        <x-alt-uu-banner class="print:hidden" />
+
         {{-- Schedule Items - Responsive Table/Cards --}}
         <x-schedule-items
             :items="$viewModel->items"
