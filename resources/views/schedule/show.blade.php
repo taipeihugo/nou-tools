@@ -25,18 +25,29 @@
                 <x-link-button
                     :href="route('schedules.edit', $viewModel->uuid)"
                     variant="secondary"
-                    class="w-full sm:w-1/3 lg:w-auto"
+                    class="w-full sm:w-1/2 lg:w-auto"
                     data-analytics-event="schedule_edit"
                     data-analytics-feature="schedule"
                 >
                     <x-heroicon-o-pencil-square class="size-4" />
-                    編輯課表
+                    編輯
+                </x-link-button>
+
+                <x-link-button
+                    :href="route('schedules.customize', $viewModel->uuid)"
+                    variant="secondary"
+                    class="w-full sm:w-1/2 lg:w-auto"
+                    data-analytics-event="schedule_customize_open"
+                    data-analytics-feature="schedule"
+                >
+                    <x-heroicon-o-cog-6-tooth class="size-4" />
+                    自訂
                 </x-link-button>
 
                 <x-link-button
                     :href="route('learning-progress.show', [$viewModel->uuid, config('app.current_semester')])"
                     variant="secondary"
-                    class="w-full sm:w-1/3 lg:w-auto"
+                    class="w-full sm:w-1/2 lg:w-auto"
                     data-analytics-event="learning_progress_open"
                     data-analytics-feature="learning_progress"
                 >
@@ -55,7 +66,7 @@
                     type="button"
                     variant="primary"
                     @click="subscribeOpen = true"
-                    class="w-full sm:w-1/3 lg:w-auto"
+                    class="w-full sm:w-1/2 lg:w-auto"
                     data-analytics-event="calendar_subscribe_open"
                     data-analytics-feature="schedule"
                 >
@@ -153,21 +164,30 @@
             </div>
         </div>
 
-        <x-greeting class="mb-4 print:hidden" />
+        @if ($viewModel->displayOptions['show_greeting'])
+            <x-greeting class="mb-4 print:hidden" />
+        @endif
 
         <x-alt-uu-banner class="print:hidden" />
 
         {{-- Schedule Items - Responsive Table/Cards --}}
-        <x-schedule-items
-            :items="$viewModel->items"
-            :scheduleUuid="$viewModel->uuid"
-            :hasAnyOverride="$viewModel->hasAnyOverride"
-        />
+        @if ($viewModel->displayOptions['show_schedule_items'])
+            <x-schedule-items
+                :items="$viewModel->items"
+                :scheduleUuid="$viewModel->uuid"
+                :hasAnyOverride="$viewModel->hasAnyOverride"
+            />
+        @endif
 
-        <x-common-links class="mb-8 print:hidden" />
+        @if ($viewModel->displayOptions['show_common_links'])
+            <x-common-links
+                class="mb-8 print:hidden"
+                :customLinks="$viewModel->customLinks"
+            />
+        @endif
 
         {{-- Schedule Calendar View --}}
-        @if (count($viewModel->items) > 0)
+        @if ($viewModel->displayOptions['show_class_dates'] && count($viewModel->items) > 0)
             <div class="mb-8">
                 <h3 class="mb-4 text-2xl font-bold text-warm-900">面授日期</h3>
                 @if ($viewModel->hasAnyOverride)
@@ -234,275 +254,305 @@
         @endif
 
         {{-- School Calendar --}}
-        <x-school-calendar class="mb-8" />
+        @if ($viewModel->displayOptions['show_school_calendar'])
+            <x-school-calendar class="mb-8" />
+        @endif
 
-        <x-card
-            class="mb-8"
-            title="考試資訊"
-            subtitle="以下為您加入課表的科目之期中 / 期末考試日期與節次。"
-        >
-            {{-- 手機：卡片列表 --}}
-            <div class="space-y-3 md:hidden">
-                @forelse ($viewModel->exams as $exam)
-                    <div class="rounded-lg border border-warm-200 bg-white p-4">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex-1">
-                                <div class="font-semibold text-warm-900">
-                                    {{ $exam->courseName }}
-                                </div>
-                                @if ($exam->classCode)
-                                    <div class="mt-1">
-                                        <x-class-code>
-                                            {{ $exam->classCode }}
-                                        </x-class-code>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="mt-3 grid grid-cols-2 gap-3">
-                            <div>
-                                <p
-                                    class="mb-1 text-xs font-semibold tracking-wide text-warm-600 uppercase"
-                                >
-                                    期中考
-                                </p>
-                                @if ($exam->midtermDate)
-                                    <div class="font-semibold text-warm-900">
-                                        {{ $exam->formattedMidtermDate() }}
-                                    </div>
-
-                                    @if ($exam->formattedExamTime())
-                                        <div class="mt-1 text-sm text-warm-600">
-                                            {{ $exam->formattedExamTime() }}
-                                        </div>
-                                    @endif
-                                @else
-                                    <div class="text-warm-500">—</div>
-                                @endif
-                            </div>
-
-                            <div>
-                                <p
-                                    class="mb-1 text-xs font-semibold tracking-wide text-warm-600 uppercase"
-                                >
-                                    期末考
-                                </p>
-                                @if ($exam->finalDate)
-                                    <div class="font-semibold text-warm-900">
-                                        {{ $exam->formattedFinalDate() }}
-                                    </div>
-
-                                    @if ($exam->formattedExamTime())
-                                        <div class="mt-1 text-sm text-warm-600">
-                                            {{ $exam->formattedExamTime() }}
-                                        </div>
-                                    @endif
-                                @else
-                                    <div class="text-warm-500">—</div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="px-4 py-16 text-center text-warm-500">
-                        您的課表中沒有任何科目有設定考試日期。
-                    </div>
-                @endforelse
-            </div>
-
-            {{-- 桌面：維持表格，但只在 md+ 顯示 --}}
-            <div class="hidden overflow-x-auto md:block">
-                <x-table class="border-collapse overflow-hidden rounded">
-                    <x-table-head>
-                        <x-table-row
-                            class="rounded-t border-b-2 border-warm-300 bg-warm-100"
+        @if ($viewModel->displayOptions['show_exam_info'])
+            <x-card
+                class="mb-8"
+                title="考試資訊"
+                subtitle="以下為您加入課表的科目之期中 / 期末考試日期與節次。"
+            >
+                {{-- 手機：卡片列表 --}}
+                <div class="space-y-3 md:hidden">
+                    @forelse ($viewModel->exams as $exam)
+                        <div
+                            class="rounded-lg border border-warm-200 bg-white p-4"
                         >
-                            <x-table-head-column>課程</x-table-head-column>
-                            <x-table-head-column>期中考</x-table-head-column>
-                            <x-table-head-column>期末考</x-table-head-column>
-                        </x-table-row>
-                    </x-table-head>
-
-                    <x-table-body>
-                        @forelse ($viewModel->exams as $exam)
-                            <x-table-row
-                                class="border-b border-warm-200 hover:bg-warm-50"
-                            >
-                                <x-table-column
-                                    class="font-semibold text-warm-900"
-                                >
-                                    {{ $exam->courseName }}
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-warm-900">
+                                        {{ $exam->courseName }}
+                                    </div>
                                     @if ($exam->classCode)
-                                        <div
-                                            class="mt-1 flex items-center gap-2"
-                                        >
+                                        <div class="mt-1">
                                             <x-class-code>
                                                 {{ $exam->classCode }}
                                             </x-class-code>
-
-                                            <a
-                                                href="{{ route('course.show', $exam->courseId) }}#previous-exams"
-                                                class="mr-3 inline-flex items-center gap-1 text-sm font-semibold text-warm-800 underline underline-offset-4 hover:text-warm-900 hover:no-underline print:hidden"
-                                                aria-label="{{ $exam->courseName }} 的課程資訊"
-                                            >
-                                                <x-heroicon-o-information-circle
-                                                    class="inline size-4"
-                                                    aria-hidden="true"
-                                                />
-                                                考古題
-                                            </a>
                                         </div>
                                     @endif
-                                </x-table-column>
+                                </div>
+                            </div>
 
-                                <x-table-column class="tabular-nums">
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                <div>
+                                    <p
+                                        class="mb-1 text-xs font-semibold tracking-wide text-warm-600 uppercase"
+                                    >
+                                        期中考
+                                    </p>
                                     @if ($exam->midtermDate)
-                                        <div class="font-semibold">
+                                        <div
+                                            class="font-semibold text-warm-900"
+                                        >
                                             {{ $exam->formattedMidtermDate() }}
                                         </div>
+
+                                        @if ($exam->formattedExamTime())
+                                            <div
+                                                class="mt-1 text-sm text-warm-600"
+                                            >
+                                                {{ $exam->formattedExamTime() }}
+                                            </div>
+                                        @endif
                                     @else
                                         <div class="text-warm-500">—</div>
                                     @endif
+                                </div>
 
-                                    @if ($exam->formattedExamTime())
-                                        <div class="mt-1 text-sm text-warm-600">
-                                            {{ $exam->formattedExamTime() }}
-                                        </div>
-                                    @endif
-                                </x-table-column>
-
-                                <x-table-column class="tabular-nums">
+                                <div>
+                                    <p
+                                        class="mb-1 text-xs font-semibold tracking-wide text-warm-600 uppercase"
+                                    >
+                                        期末考
+                                    </p>
                                     @if ($exam->finalDate)
-                                        <div class="font-semibold">
+                                        <div
+                                            class="font-semibold text-warm-900"
+                                        >
                                             {{ $exam->formattedFinalDate() }}
                                         </div>
+
+                                        @if ($exam->formattedExamTime())
+                                            <div
+                                                class="mt-1 text-sm text-warm-600"
+                                            >
+                                                {{ $exam->formattedExamTime() }}
+                                            </div>
+                                        @endif
                                     @else
                                         <div class="text-warm-500">—</div>
                                     @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="px-4 py-16 text-center text-warm-500">
+                            您的課表中沒有任何科目有設定考試日期。
+                        </div>
+                    @endforelse
+                </div>
 
-                                    @if ($exam->formattedExamTime())
-                                        <div class="mt-1 text-sm text-warm-600">
-                                            {{ $exam->formattedExamTime() }}
-                                        </div>
-                                    @endif
-                                </x-table-column>
+                {{-- 桌面：維持表格，但只在 md+ 顯示 --}}
+                <div class="hidden overflow-x-auto md:block">
+                    <x-table class="border-collapse overflow-hidden rounded">
+                        <x-table-head>
+                            <x-table-row
+                                class="rounded-t border-b-2 border-warm-300 bg-warm-100"
+                            >
+                                <x-table-head-column>課程</x-table-head-column>
+                                <x-table-head-column>
+                                    期中考
+                                </x-table-head-column>
+                                <x-table-head-column>
+                                    期末考
+                                </x-table-head-column>
                             </x-table-row>
-                        @empty
-                            <x-table-row>
-                                <x-table-column
-                                    colspan="3"
-                                    class="px-4 py-16 text-center text-warm-500"
+                        </x-table-head>
+
+                        <x-table-body>
+                            @forelse ($viewModel->exams as $exam)
+                                <x-table-row
+                                    class="border-b border-warm-200 hover:bg-warm-50"
                                 >
-                                    您的課表中沒有任何科目有設定考試日期。
-                                </x-table-column>
-                            </x-table-row>
-                        @endforelse
-                    </x-table-body>
-                </x-table>
-            </div>
-        </x-card>
+                                    <x-table-column
+                                        class="font-semibold text-warm-900"
+                                    >
+                                        {{ $exam->courseName }}
+                                        @if ($exam->classCode)
+                                            <div
+                                                class="mt-1 flex items-center gap-2"
+                                            >
+                                                <x-class-code>
+                                                    {{ $exam->classCode }}
+                                                </x-class-code>
+
+                                                <a
+                                                    href="{{ route('course.show', $exam->courseId) }}#previous-exams"
+                                                    class="mr-3 inline-flex items-center gap-1 text-sm font-semibold text-warm-800 underline underline-offset-4 hover:text-warm-900 hover:no-underline print:hidden"
+                                                    aria-label="{{ $exam->courseName }} 的課程資訊"
+                                                >
+                                                    <x-heroicon-o-information-circle
+                                                        class="inline size-4"
+                                                        aria-hidden="true"
+                                                    />
+                                                    考古題
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </x-table-column>
+
+                                    <x-table-column class="tabular-nums">
+                                        @if ($exam->midtermDate)
+                                            <div class="font-semibold">
+                                                {{ $exam->formattedMidtermDate() }}
+                                            </div>
+                                        @else
+                                            <div class="text-warm-500">—</div>
+                                        @endif
+
+                                        @if ($exam->formattedExamTime())
+                                            <div
+                                                class="mt-1 text-sm text-warm-600"
+                                            >
+                                                {{ $exam->formattedExamTime() }}
+                                            </div>
+                                        @endif
+                                    </x-table-column>
+
+                                    <x-table-column class="tabular-nums">
+                                        @if ($exam->finalDate)
+                                            <div class="font-semibold">
+                                                {{ $exam->formattedFinalDate() }}
+                                            </div>
+                                        @else
+                                            <div class="text-warm-500">—</div>
+                                        @endif
+
+                                        @if ($exam->formattedExamTime())
+                                            <div
+                                                class="mt-1 text-sm text-warm-600"
+                                            >
+                                                {{ $exam->formattedExamTime() }}
+                                            </div>
+                                        @endif
+                                    </x-table-column>
+                                </x-table-row>
+                            @empty
+                                <x-table-row>
+                                    <x-table-column
+                                        colspan="3"
+                                        class="px-4 py-16 text-center text-warm-500"
+                                    >
+                                        您的課表中沒有任何科目有設定考試日期。
+                                    </x-table-column>
+                                </x-table-row>
+                            @endforelse
+                        </x-table-body>
+                    </x-table>
+                </div>
+            </x-card>
+        @endif
 
         {{-- Share Section --}}
-        <x-card>
-            <div class="flex items-center justify-between gap-4 print:flex">
-                <div class="w-full md:w-auto md:flex-1 print:flex-1">
-                    <p class="mb-3 text-warm-700">
-                        您可以使用以下連結來編輯或檢視此課表，請妥善保管此連結。
-                        <br />
-                        <span
-                            class="inline-flex items-center gap-1 font-semibold text-red-600"
+        @if ($viewModel->displayOptions['show_share_section'])
+            <x-card>
+                <div class="flex items-center justify-between gap-4 print:flex">
+                    <div class="w-full md:w-auto md:flex-1 print:flex-1">
+                        <p class="mb-3 text-warm-700">
+                            您可以使用以下連結來編輯或檢視此課表，請妥善保管此連結。
+                            <br />
+                            <span
+                                class="inline-flex items-center gap-1 font-semibold text-red-600"
+                            >
+                                <x-heroicon-o-exclamation-triangle
+                                    class="size-4"
+                                />
+                                注意：任何擁有此連結的人都可以編輯您的課表。
+                            </span>
+                        </p>
+
+                        <div
+                            x-data="{
+                                shareUrl: {{ Js::from(url(route('schedules.show', $viewModel->uuid))) }},
+                                copied: false,
+                                async copy() {
+                                    try {
+                                        await navigator.clipboard.writeText(this.shareUrl)
+                                    } catch (e) {
+                                        this.$refs.shareInput.select()
+                                        document.execCommand('copy')
+                                    }
+
+                                    this.copied = true
+                                    setTimeout(() => (this.copied = false), 2000)
+                                },
+                            }"
+                            class="rounded border border-warm-300 bg-white text-sm text-warm-600"
                         >
-                            <x-heroicon-o-exclamation-triangle class="size-4" />
-                            注意：任何擁有此連結的人都可以編輯您的課表。
-                        </span>
-                    </p>
-
-                    <div
-                        x-data="{
-                            shareUrl: {{ Js::from(url(route('schedules.show', $viewModel->uuid))) }},
-                            copied: false,
-                            async copy() {
-                                try {
-                                    await navigator.clipboard.writeText(this.shareUrl)
-                                } catch (e) {
-                                    this.$refs.shareInput.select()
-                                    document.execCommand('copy')
-                                }
-
-                                this.copied = true
-                                setTimeout(() => (this.copied = false), 2000)
-                            },
-                        }"
-                        class="rounded border border-warm-300 bg-white text-sm text-warm-600"
-                    >
-                        <div class="flex items-stretch gap-3">
-                            <input
-                                class="flex-1 px-3 py-2 font-mono break-all text-warm-600 print:hidden"
-                                :value="shareUrl"
-                                readonly
-                                @click="$event.target.select()"
-                                x-ref="shareInput"
-                                aria-label="我的課表連結"
-                            />
-                            <div
-                                class="hidden items-center px-3 py-2 font-mono break-all text-warm-600 print:flex"
-                                x-text="shareUrl"
-                            ></div>
-
-                            <div class="shrink-0">
-                                <x-button
-                                    type="button"
-                                    variant="warm-subtle"
-                                    size="sm"
-                                    @click="copy()"
-                                    x-bind:aria-pressed="copied.toString()"
-                                    class="ml-2 h-full rounded-l-none rounded-r whitespace-nowrap print:hidden"
-                                >
-                                    <span x-show="!copied">
-                                        <x-heroicon-o-clipboard-document
-                                            class="inline size-4"
-                                        />
-                                        複製連結
-                                    </span>
-                                    <span x-show="copied">
-                                        <x-heroicon-o-check
-                                            class="inline size-4"
-                                        />
-                                        已複製！
-                                    </span>
-                                </x-button>
-
+                            <div class="flex items-stretch gap-3">
+                                <input
+                                    class="flex-1 px-3 py-2 font-mono break-all text-warm-600 print:hidden"
+                                    :value="shareUrl"
+                                    readonly
+                                    @click="$event.target.select()"
+                                    x-ref="shareInput"
+                                    aria-label="我的課表連結"
+                                />
                                 <div
-                                    class="sr-only"
-                                    role="status"
-                                    aria-live="polite"
-                                    x-text="copied ? '已複製' : ''"
+                                    class="hidden items-center px-3 py-2 font-mono break-all text-warm-600 print:flex"
+                                    x-text="shareUrl"
                                 ></div>
+
+                                <div class="shrink-0">
+                                    <x-button
+                                        type="button"
+                                        variant="warm-subtle"
+                                        size="sm"
+                                        @click="copy()"
+                                        x-bind:aria-pressed="copied.toString()"
+                                        class="ml-2 h-full rounded-l-none rounded-r whitespace-nowrap print:hidden"
+                                    >
+                                        <span x-show="!copied">
+                                            <x-heroicon-o-clipboard-document
+                                                class="inline size-4"
+                                            />
+                                            複製連結
+                                        </span>
+                                        <span x-show="copied">
+                                            <x-heroicon-o-check
+                                                class="inline size-4"
+                                            />
+                                            已複製！
+                                        </span>
+                                    </x-button>
+
+                                    <div
+                                        class="sr-only"
+                                        role="status"
+                                        aria-live="polite"
+                                        x-text="copied ? '已複製' : ''"
+                                    ></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div
-                    class="hidden w-28 flex-col items-center justify-center md:flex print:flex"
-                >
-                    <div class="rounded border border-warm-200 bg-white p-2">
-                        {!! DNS2D::getBarcodeSVG(url(route('schedules.show', $viewModel->uuid)), 'QRCODE') !!}
+                    <div
+                        class="hidden w-28 flex-col items-center justify-center md:flex print:flex"
+                    >
+                        <div
+                            class="rounded border border-warm-200 bg-white p-2"
+                        >
+                            {!! DNS2D::getBarcodeSVG(url(route('schedules.show', $viewModel->uuid)), 'QRCODE') !!}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </x-card>
+            </x-card>
+        @endif
 
-        <div class="mt-6 flex justify-end print:hidden">
-            <x-button
-                type="button"
-                variant="warm-subtle"
-                onclick="window.print()"
-            >
-                <x-heroicon-o-printer class="inline size-4" />
-                列印
-            </x-button>
-        </div>
+        @if ($viewModel->displayOptions['show_print_button'])
+            <div class="mt-6 flex justify-end print:hidden">
+                <x-button
+                    type="button"
+                    variant="warm-subtle"
+                    onclick="window.print()"
+                >
+                    <x-heroicon-o-printer class="inline size-4" />
+                    列印
+                </x-button>
+            </div>
+        @endif
     </div>
 </x-layout>

@@ -270,3 +270,136 @@ it('create page form posts to store route and does not include method spoofing',
         ->assertSee('template x-for="item in selectedItems"', false)
         ->assertSee('name="name"', false); // schedule name field should have a name attribute
 });
+
+it('customize page can update display options and custom links', function () {
+    $schedule = StudentSchedule::create([
+        'uuid' => Str::uuid(),
+        'name' => 'Customize Me',
+    ]);
+
+    $response = $this->put(route('schedules.customize.update', $schedule), [
+        'display_options' => [
+            'show_greeting' => 0,
+            'show_schedule_items' => 1,
+            'show_common_links' => 1,
+            'show_class_dates' => 1,
+            'show_school_calendar' => 0,
+            'show_exam_info' => 1,
+            'show_share_section' => 1,
+            'show_print_button' => 0,
+        ],
+        'custom_links' => [
+            ['title' => '  學習群組  ', 'url' => '  https://help.nou.edu.tw/group  '],
+            ['title' => '', 'url' => ''],
+        ],
+    ]);
+
+    $response->assertRedirect(route('schedules.show', $schedule));
+
+    $schedule->refresh();
+
+    expect($schedule->display_options)->toBe([
+        'show_greeting' => false,
+        'show_schedule_items' => true,
+        'show_common_links' => true,
+        'show_class_dates' => true,
+        'show_school_calendar' => false,
+        'show_exam_info' => true,
+        'show_share_section' => true,
+        'show_print_button' => false,
+    ]);
+
+    expect($schedule->custom_links)->toBe([
+        [
+            'title' => '學習群組',
+            'url' => 'https://help.nou.edu.tw/group',
+        ],
+    ]);
+});
+
+it('customize page rejects custom link domains outside allowed list', function () {
+    $schedule = StudentSchedule::create([
+        'uuid' => Str::uuid(),
+        'name' => 'Bad Domain',
+    ]);
+
+    $response = $this->from(route('schedules.customize', $schedule))
+        ->put(route('schedules.customize.update', $schedule), [
+            'display_options' => [
+                'show_greeting' => 1,
+                'show_schedule_items' => 1,
+                'show_common_links' => 1,
+                'show_class_dates' => 1,
+                'show_school_calendar' => 1,
+                'show_exam_info' => 1,
+                'show_share_section' => 1,
+                'show_print_button' => 1,
+            ],
+            'custom_links' => [
+                ['title' => '測試', 'url' => 'https://example.com/bad'],
+            ],
+        ]);
+
+    $response->assertRedirect(route('schedules.customize', $schedule));
+    $response->assertSessionHasErrors(['custom_links.0.url']);
+});
+
+it('customize page preserves old input after validation failure', function () {
+    $schedule = StudentSchedule::create([
+        'uuid' => Str::uuid(),
+        'name' => 'Preserve Input',
+    ]);
+
+    $response = $this->followingRedirects()
+        ->from(route('schedules.customize', $schedule))
+        ->put(route('schedules.customize.update', $schedule), [
+            'display_options' => [
+                'show_greeting' => 1,
+                'show_schedule_items' => 1,
+                'show_common_links' => 1,
+                'show_class_dates' => 1,
+                'show_school_calendar' => 1,
+                'show_exam_info' => 1,
+                'show_share_section' => 1,
+                'show_print_button' => 1,
+            ],
+            'custom_links' => [
+                ['title' => '我的課程群組', 'url' => 'https://example.com/bad'],
+            ],
+        ]);
+
+    $response->assertStatus(200)
+        ->assertSee('links: JSON.parse')
+        ->assertSee('example.com');
+});
+
+it('schedule show page hides disabled sections and shows custom links', function () {
+    $schedule = StudentSchedule::create([
+        'uuid' => Str::uuid(),
+        'name' => 'Customized Schedule',
+        'display_options' => [
+            'show_greeting' => false,
+            'show_alt_uu_banner' => false,
+            'show_schedule_items' => true,
+            'show_common_links' => true,
+            'show_class_dates' => true,
+            'show_school_calendar' => false,
+            'show_exam_info' => true,
+            'show_share_section' => false,
+            'show_print_button' => false,
+        ],
+        'custom_links' => [
+            ['title' => '我的自訂連結', 'url' => 'https://example.com/help'],
+        ],
+    ]);
+
+    $response = $this->get(route('schedules.show', $schedule));
+
+    $response->assertStatus(200)
+        ->assertDontSee('今天是')
+        ->assertDontSee('學校行事曆')
+        ->assertDontSee('複製連結')
+        ->assertDontSee('列印')
+        ->assertSee('我的自訂連結')
+        ->assertSee('https://example.com/help');
+});

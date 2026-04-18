@@ -7,11 +7,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use NouTools\Domains\Schedules\Actions\BuildScheduleCustomizationPage;
 use NouTools\Domains\Schedules\Actions\BuildScheduleEditorPage;
 use NouTools\Domains\Schedules\Actions\BuildStudentScheduleCookie;
 use NouTools\Domains\Schedules\Actions\CreateSchedule;
 use NouTools\Domains\Schedules\Actions\ShowSchedulePage;
 use NouTools\Domains\Schedules\Actions\UpdateSchedule;
+use NouTools\Domains\Schedules\Actions\UpdateScheduleCustomization;
+use NouTools\Domains\Schedules\DataTransferObjects\ScheduleCustomizationUpsertData;
 use NouTools\Domains\Schedules\DataTransferObjects\StudentScheduleUpsertData;
 
 class ScheduleController extends Controller
@@ -77,5 +80,20 @@ class ScheduleController extends Controller
         return view('schedule.show', [
             'viewModel' => $showSchedulePage($schedule),
         ]);
+    }
+
+    public function customize(StudentSchedule $schedule, BuildScheduleCustomizationPage $buildScheduleCustomizationPage): View
+    {
+        return view('schedule.customize', [
+            'viewModel' => $buildScheduleCustomizationPage($schedule),
+        ]);
+    }
+
+    public function updateCustomization(StudentSchedule $schedule, ScheduleCustomizationUpsertData $input, UpdateScheduleCustomization $updateScheduleCustomization): RedirectResponse
+    {
+        $updateScheduleCustomization($schedule, $input);
+
+        return redirect()->route('schedules.show', $schedule)
+            ->with('success', '課表自訂設定已更新！');
     }
 }

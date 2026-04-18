@@ -14,6 +14,8 @@ class StudentSchedule extends Model
     protected $fillable = [
         'uuid',
         'name',
+        'display_options',
+        'custom_links',
         'last_calendar_sync_at',
     ];
 
@@ -63,6 +65,8 @@ class StudentSchedule extends Model
     }
 
     protected $casts = [
+        'display_options' => 'json',
+        'custom_links' => 'json',
         'last_calendar_sync_at' => 'datetime',
     ];
 

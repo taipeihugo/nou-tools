@@ -148,7 +148,7 @@
                 >
                     沒有課程。
                     <a
-                        href="{{ route('schedules.edit', $schedule) }}"
+                        href="{{ route('schedules.edit', $scheduleUuid) }}"
                         class="font-semibold text-orange-600 hover:underline"
                     >
                         點擊編輯課表

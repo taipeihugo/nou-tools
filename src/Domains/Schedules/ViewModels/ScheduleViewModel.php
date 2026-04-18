@@ -14,6 +14,10 @@ final class ScheduleViewModel extends Data
         public int $id,
         public string $uuid,
         public ?string $name,
+        /** @var array<string, bool> */
+        public array $displayOptions,
+        /** @var array<int, array{title: string, url: string}> */
+        public array $customLinks,
         #[DataCollectionOf(StudentScheduleItemViewModel::class)]
         public DataCollection $items,
         public bool $hasAnyOverride,
@@ -30,6 +34,8 @@ final class ScheduleViewModel extends Data
             id: $schedule->id,
             uuid: $schedule->getRouteKey(),
             name: $schedule->name,
+            displayOptions: ScheduleCustomizationPageViewModel::normalizeDisplayOptions($schedule->display_options),
+            customLinks: ScheduleCustomizationPageViewModel::normalizeCustomLinks($schedule->custom_links),
             items: StudentScheduleItemViewModel::collect(
                 $schedule->items->map(fn ($item) => StudentScheduleItemViewModel::fromModel($item)),
                 DataCollection::class,

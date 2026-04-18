@@ -32,6 +32,8 @@ Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules
 Route::get('/schedules/{schedule}', [ScheduleController::class, 'show'])->name('schedules.show');
 Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
 Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+Route::get('/schedules/{schedule}/customize', [ScheduleController::class, 'customize'])->name('schedules.customize');
+Route::put('/schedules/{schedule}/customize', [ScheduleController::class, 'updateCustomization'])->name('schedules.customize.update');
 Route::get('/schedules/{schedule}/calendar', ScheduleCalendarController::class)->name('schedules.calendar');
 
 Route::get('/schedules/{schedule}/{term}/learning-progress', [LearningProgressController::class, 'show'])
