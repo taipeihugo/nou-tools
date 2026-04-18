@@ -22,7 +22,7 @@ it('shows announcement entry points on home page', function () {
     $response = get(route('home'));
 
     $response->assertSuccessful();
-    $response->assertSee('查看最新公告');
+    $response->assertSee('檢視最新公告');
     $response->assertSee(route('announcements.index'));
 });
 
