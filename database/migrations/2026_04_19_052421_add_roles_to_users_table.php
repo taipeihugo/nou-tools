@@ -16,7 +16,7 @@ return new class extends Migration
 
         Schema::table('users', function (Blueprint $table) use ($isSqlite) {
             $table->json('roles')
-                ->default($isSqlite ? '[]' : DB::raw('JSON_ARRAY()'))
+                ->default($isSqlite ? '[]' : DB::raw('(JSON_ARRAY())'))
                 ->after('password');
         });
     }
