@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,8 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->json('roles')->after('password');
+        $isSqlite = Schema::getConnection()->getDriverName() === 'sqlite';
+
+        Schema::table('users', function (Blueprint $table) use ($isSqlite) {
+            $table->json('roles')
+                ->default($isSqlite ? '[]' : DB::raw('JSON_ARRAY()'))
+                ->after('password');
         });
     }
 
