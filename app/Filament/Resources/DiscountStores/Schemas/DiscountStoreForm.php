@@ -86,7 +86,9 @@ class DiscountStoreForm
                             ->visible(fn (Get $get): bool => $get('type') !== DiscountStoreType::Online->value),
                         TextInput::make('address')
                             ->label(fn (Get $get): string => $get('type') === DiscountStoreType::Online->value ? '網址' : '詳細地址')
-                            ->maxLength(500),
+                            ->maxLength(500)
+                            ->default('')
+                            ->dehydrateStateUsing(fn (mixed $state): string => $state ?? ''),
                     ])
                     ->columns(2),
                 Section::make('優惠資訊')
@@ -94,7 +96,9 @@ class DiscountStoreForm
                         TextInput::make('verification_method')
                             ->label('驗證方式')
                             ->placeholder('例如：學生信箱、學生證、學生證+選課卡')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->default('')
+                            ->dehydrateStateUsing(fn (mixed $state): string => $state ?? ''),
                         Textarea::make('discount_details')
                             ->label('優惠內容')
                             ->required()
