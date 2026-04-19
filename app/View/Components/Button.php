@@ -33,15 +33,15 @@ class Button extends Component
     protected function getVariantClasses(): string
     {
         return match ($this->variant) {
-            'primary' => 'bg-warm-600 text-white hover:bg-warm-700 disabled:bg-warm-400',
+            'primary' => 'border border-warm-600 bg-warm-600 text-white hover:bg-warm-700 disabled:bg-warm-400',
             'secondary' => 'border border-warm-500 bg-white text-warm-900 hover:bg-warm-50 disabled:border-warm-200 disabled:bg-warm-50',
-            'danger' => 'bg-red-100 text-red-700 hover:bg-red-200 disabled:bg-red-50',
+            'danger' => 'border border-red-100 bg-red-100 text-red-700 hover:bg-red-200 disabled:bg-red-50',
             'ghost' => 'border border-warm-200 bg-white text-warm-900 hover:bg-warm-50 disabled:border-warm-100',
-            'warm-dark' => 'bg-warm-700 text-white hover:bg-warm-800 disabled:bg-warm-600',
-            'warm-subtle' => 'bg-warm-200 text-warm-900 hover:bg-warm-300 disabled:bg-warm-100',
+            'warm-dark' => 'border border-warm-700 bg-warm-700 text-white hover:bg-warm-800 disabled:bg-warm-600',
+            'warm-subtle' => 'border border-warm-200 bg-warm-200 text-warm-900 hover:bg-warm-300 disabled:bg-warm-100',
             'link' => 'text-orange-600 hover:text-orange-700 underline underline-offset-4 hover:no-underline',
             'text-link' => 'text-orange-600 hover:text-orange-700',
-            default => 'bg-orange-500 text-white hover:bg-orange-600 disabled:bg-orange-300',
+            default => 'border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 disabled:bg-orange-300',
         };
     }
 

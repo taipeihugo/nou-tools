@@ -4,6 +4,7 @@ use App\Enums\ArticleType;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DiscountStoreController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LearningProgressController;
 use App\Http\Controllers\ScheduleCalendarController;
@@ -43,6 +44,13 @@ Route::get('/schedules/{schedule}/{term}/learning-progress', [LearningProgressCo
     ->name('learning-progress.show');
 Route::put('/schedules/{schedule}/{term}/learning-progress', [LearningProgressController::class, 'update'])
     ->name('learning-progress.update');
+
+Route::get('/discount-stores', [DiscountStoreController::class, 'index'])->name('discount-stores.index');
+Route::get('/discount-stores/create', [DiscountStoreController::class, 'create'])->name('discount-stores.create');
+Route::get('/discount-stores/{store}', [DiscountStoreController::class, 'show'])->name('discount-stores.show');
+Route::post('/discount-stores', [DiscountStoreController::class, 'store'])->name('discount-stores.store');
+Route::post('/discount-stores/{store}/reports', [DiscountStoreController::class, 'storeReport'])->name('discount-stores.reports.store');
+Route::post('/discount-stores/{store}/comments', [DiscountStoreController::class, 'storeComment'])->name('discount-stores.comments.store');
 
 Route::get('/{type}', [ArticleController::class, 'index'])->name('articles.index')
     ->whereIn('type', ArticleType::cases());

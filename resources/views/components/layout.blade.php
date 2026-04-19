@@ -179,6 +179,24 @@
                             </a>
 
                             <a
+                                href="{{ route('discount-stores.index') }}"
+                                @class([
+                                    '-m-2 inline-flex items-center gap-1.5 rounded-md px-5 py-2 text-sm font-medium transition-colors md:px-3',
+                                    'bg-warm-100 text-warm-900' => str_starts_with(
+                                        $routeName ?? '',
+                                        'discount-stores',
+                                    ),
+                                    'text-warm-600 hover:bg-warm-100 hover:text-warm-900' => ! str_starts_with(
+                                        $routeName ?? '',
+                                        'discount-stores',
+                                    ),
+                                ])
+                            >
+                                <x-heroicon-o-tag class="size-4 shrink-0" />
+                                <span class="hidden sm:inline">優惠店家</span>
+                            </a>
+
+                            <a
                                 href="{{ route('alt-uu') }}"
                                 @class([
                                     '-m-2 inline-flex items-center gap-1.5 rounded-md px-5 py-2 text-sm font-medium transition-colors md:px-3',
@@ -230,6 +248,24 @@
                     >
                         <x-heroicon-o-megaphone class="size-4 shrink-0" />
                         學校公告
+                    </a>
+
+                    <a
+                        href="{{ route('discount-stores.index') }}"
+                        @class([
+                            'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                            'bg-warm-100 text-warm-900' => str_starts_with(
+                                $routeName ?? '',
+                                'discount-stores',
+                            ),
+                            'text-warm-600 hover:bg-warm-100 hover:text-warm-900' => ! str_starts_with(
+                                $routeName ?? '',
+                                'discount-stores',
+                            ),
+                        ])
+                    >
+                        <x-heroicon-o-tag class="size-4 shrink-0" />
+                        優惠店家
                     </a>
 
                     <a

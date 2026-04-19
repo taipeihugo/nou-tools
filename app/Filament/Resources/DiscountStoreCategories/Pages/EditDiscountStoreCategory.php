@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Resources\DiscountStoreCategories\Pages;
+
+use App\Filament\Resources\DiscountStoreCategories\DiscountStoreCategoryResource;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditDiscountStoreCategory extends EditRecord
+{
+    protected static string $resource = DiscountStoreCategoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make(),
+        ];
+    }
+}
