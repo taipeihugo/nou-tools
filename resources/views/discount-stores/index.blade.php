@@ -201,7 +201,7 @@
                             <div
                                 class="flex flex-col items-center justify-between md:flex-row"
                             >
-                                <div class="flex shrink-0 flex-col">
+                                <div class="min-w-0 flex-1 flex-col">
                                     <h3
                                         class="truncate text-xl font-semibold text-warm-900"
                                     >
@@ -214,7 +214,7 @@
                                     </h3>
 
                                     <p
-                                        class="line-clamp-2 truncate text-sm text-warm-600"
+                                        class="line-clamp-2 text-sm text-warm-600"
                                     >
                                         <a
                                             href="{{ route('discount-stores.show', $store) }}"
