@@ -278,10 +278,24 @@
                                         {{ $exam->courseName }}
                                     </div>
                                     @if ($exam->classCode)
-                                        <div class="mt-1">
+                                        <div
+                                            class="mt-1 flex items-center gap-2"
+                                        >
                                             <x-class-code>
                                                 {{ $exam->classCode }}
                                             </x-class-code>
+
+                                            <a
+                                                href="{{ route('course.show', $exam->courseId) }}#previous-exams"
+                                                class="mr-3 inline-flex items-center gap-1 text-sm font-semibold text-warm-800 underline underline-offset-4 hover:text-warm-900 hover:no-underline print:hidden"
+                                                aria-label="{{ $exam->courseName }} 的課程資訊"
+                                            >
+                                                <x-heroicon-o-information-circle
+                                                    class="inline size-4"
+                                                    aria-hidden="true"
+                                                />
+                                                考古題
+                                            </a>
                                         </div>
                                     @endif
                                 </div>
