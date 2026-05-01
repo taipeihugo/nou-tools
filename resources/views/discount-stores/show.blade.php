@@ -18,7 +18,6 @@
                     shouldShowMap: @js($store->type !== \App\Enums\DiscountStoreType::Online && filled($store->address) && $store->latitude !== null && $store->longitude !== null),
                     mapTileLayer: @js(config('services.map.tileLayer')),
                     mapTileLayerAttribution: @js(config('services.map.tileLayerAttribution')),
-                    mapMarkerIconUrl: @js(asset('favicon.svg')),
                 })"
         x-on:leaflet-loaded.window.camel="
             if (shouldShowMap) {
@@ -256,143 +255,132 @@
                 </div>
 
                 <template x-if="showReportModal">
-                    <div
-                        x-transition.opacity
-                        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                        @click.self="closeReportModal()"
-                    >
+                    <template x-teleport="body">
                         <div
-                            class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+                            x-transition.opacity
+                            class="fixed inset-0 z-1100 flex items-center justify-center bg-black/50"
+                            @click.self="closeReportModal()"
                         >
-                            <h3
-                                class="mb-4 text-lg font-semibold text-warm-900"
+                            <div
+                                class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
                             >
-                                回報「
-                                <span x-text="storeName"></span>
-                                」
-                                <span x-text="isValid ? '有效' : '無效'"></span>
-                            </h3>
-                            <form
-                                action="{{ route('discount-stores.reports.store', $store) }}"
-                                method="POST"
-                                class="space-y-4"
-                            >
-                                @csrf
-                                <input
-                                    type="hidden"
-                                    name="is_valid"
-                                    :value="isValid ? '1' : '0'"
-                                />
-                                <div>
-                                    <label
-                                        for="report-comment-{{ $store->id }}"
-                                        class="mb-1 block text-sm font-medium text-warm-700"
-                                    >
-                                        備註（選填）
-                                    </label>
-                                    <textarea
-                                        id="report-comment-{{ $store->id }}"
-                                        name="comment"
-                                        rows="2"
-                                        class="w-full rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
-                                        placeholder="補充說明..."
-                                    ></textarea>
-                                </div>
-                                <div>
-                                    <x-cf-turnstile
-                                        id="turnstile__store-report"
-                                        language="zh-tw"
-                                        explicit
+                                <h3
+                                    class="mb-4 text-lg font-semibold text-warm-900"
+                                >
+                                    回報「
+                                    <span x-text="storeName"></span>
+                                    」
+                                    <span
+                                        x-text="isValid ? '有效' : '無效'"
+                                    ></span>
+                                </h3>
+                                <form
+                                    action="{{ route('discount-stores.reports.store', $store) }}"
+                                    method="POST"
+                                    class="space-y-4"
+                                >
+                                    @csrf
+                                    <input
+                                        type="hidden"
+                                        name="is_valid"
+                                        :value="isValid ? '1' : '0'"
                                     />
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button
-                                        type="submit"
-                                        class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition disabled:bg-gray-400"
-                                        :class="isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
-                                        :disabled="! reportFormTurnstileChallengeExecuted"
-                                    >
-                                        確認回報
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="inline-flex items-center gap-2 rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
-                                        @click="closeReportModal()"
-                                    >
-                                        取消
-                                    </button>
-                                </div>
-                            </form>
+                                    <div>
+                                        <label
+                                            for="report-comment-{{ $store->id }}"
+                                            class="mb-1 block text-sm font-medium text-warm-700"
+                                        >
+                                            備註（選填）
+                                        </label>
+                                        <textarea
+                                            id="report-comment-{{ $store->id }}"
+                                            name="comment"
+                                            rows="2"
+                                            class="w-full rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
+                                            placeholder="補充說明..."
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <x-cf-turnstile
+                                            id="turnstile__store-report"
+                                            language="zh-tw"
+                                            explicit
+                                        />
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            type="submit"
+                                            class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition disabled:bg-gray-400"
+                                            :class="isValid ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
+                                            :disabled="! reportFormTurnstileChallengeExecuted"
+                                        >
+                                            確認回報
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center gap-2 rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
+                                            @click="closeReportModal()"
+                                        >
+                                            取消
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </template>
             </div>
         </x-card>
 
         <template x-if="showMapSelectionModal">
-            <div
-                x-transition.opacity
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                @click.self="closeMapSelectionModal()"
-            >
+            <template x-teleport="body">
                 <div
-                    class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+                    x-transition.opacity
+                    class="fixed inset-0 z-1100 flex items-center justify-center bg-black/50"
+                    @click.self="closeMapSelectionModal()"
                 >
-                    <h3 class="mb-4 text-lg font-semibold text-warm-900">
-                        選擇地圖應用
-                    </h3>
-                    <p class="mb-6 text-sm text-warm-600">
-                        在哪個地圖應用中開啟此位置？
-                    </p>
-                    <div class="space-y-2">
-                        <button
-                            type="button"
-                            @click="openInMap('osm')"
-                            class="w-full rounded-lg border border-warm-200 px-4 py-3 text-left text-sm font-medium text-warm-700 transition hover:bg-warm-50"
-                        >
-                            <span class="flex items-center gap-2">
-                                <x-heroicon-o-globe-alt class="size-4" />
+                    <div
+                        class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+                    >
+                        <h3 class="mb-4 text-lg font-semibold text-warm-900">
+                            選擇地圖 App
+                        </h3>
+                        <p class="mb-6 text-sm text-warm-600">
+                            選擇你慣用的地圖應用程式來檢視店家位置。
+                        </p>
+                        <div class="space-y-2">
+                            <button
+                                type="button"
+                                @click="openInMap('osm')"
+                                class="w-full rounded-lg border border-warm-200 px-4 py-3 text-center text-sm font-medium text-warm-700 transition hover:bg-warm-50"
+                            >
                                 在 OpenStreetMap 開啟
-                            </span>
-                        </button>
-                        <button
-                            type="button"
-                            @click="openInMap('apple')"
-                            class="w-full rounded-lg border border-warm-200 px-4 py-3 text-left text-sm font-medium text-warm-700 transition hover:bg-warm-50"
-                        >
-                            <span class="flex items-center gap-2">
-                                <svg
-                                    class="size-4"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        d="M18.71 19.71a6 6 0 0 1-8.485 0l-.88-.89a.996.996 0 1 0-1.41 1.41l.89.89a8 8 0 0 0 11.31 0l-.889-.889a.996.996 0 0 0-1.41 1.41l.88.889zM12.005 5.999a5.991 5.991 0 0 0-4.241 10.247l.884.883a.996.996 0 1 0 1.41-1.41l-.883-.884a4 4 0 1 1 5.657 0l-.884.884a.996.996 0 1 0 1.41 1.41l.883-.883A5.991 5.991 0 0 0 12.005 5.999z"
-                                    ></path>
-                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                @click="openInMap('apple')"
+                                class="w-full rounded-lg border border-warm-200 px-4 py-3 text-center text-sm font-medium text-warm-700 transition hover:bg-warm-50"
+                            >
                                 在 Apple 地圖開啟
-                            </span>
-                        </button>
+                            </button>
+                            <button
+                                type="button"
+                                @click="openInMap('google')"
+                                class="w-full rounded-lg border border-warm-200 px-4 py-3 text-center text-sm font-medium text-warm-700 transition hover:bg-warm-50"
+                            >
+                                在 Google 地圖開啟
+                            </button>
+                        </div>
                         <button
                             type="button"
-                            @click="openInMap('google')"
-                            class="w-full rounded-lg border border-warm-200 px-4 py-3 text-left text-sm font-medium text-warm-700 transition hover:bg-warm-50"
+                            class="mt-4 w-full rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
+                            @click="closeMapSelectionModal()"
                         >
-                            <span class="flex items-center gap-2">
-                                <x-heroicon-o-map class="size-4" />
-                                在 Google 地圖開啟
-                            </span>
+                            關閉
                         </button>
                     </div>
-                    <button
-                        type="button"
-                        class="mt-4 w-full rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
-                        @click="closeMapSelectionModal()"
-                    >
-                        關閉
-                    </button>
                 </div>
-            </div>
+            </template>
         </template>
 
         @if ($store->comments->isNotEmpty())
@@ -447,75 +435,79 @@
         </x-card>
 
         <template x-if="showCommentModal">
-            <div
-                x-transition.opacity
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-                @click.self="closeCommentModal()"
-            >
+            <template x-teleport="body">
                 <div
-                    class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+                    x-transition.opacity
+                    class="fixed inset-0 z-1100 flex items-center justify-center bg-black/50"
+                    @click.self="closeCommentModal()"
                 >
-                    <h3 class="mb-4 text-lg font-semibold text-warm-900">
-                        新增留言
-                    </h3>
-                    <form
-                        action="{{ route('discount-stores.comments.store', $store) }}"
-                        method="POST"
-                        class="space-y-4"
+                    <div
+                        class="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
                     >
-                        @csrf
-                        <div class="flex flex-col gap-2">
-                            <input
-                                type="text"
-                                name="nickname"
-                                class="rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
-                                placeholder="暱稱"
-                                maxlength="100"
-                                required
-                                value="{{ old('nickname') }}"
-                            />
-                            <textarea
-                                type="text"
-                                name="content"
-                                class="flex-1 rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
-                                placeholder="留言（審核後顯示）..."
-                                maxlength="1000"
-                                rows="5"
-                                required
-                            >
+                        <h3 class="mb-4 text-lg font-semibold text-warm-900">
+                            新增留言
+                        </h3>
+                        <form
+                            action="{{ route('discount-stores.comments.store', $store) }}"
+                            method="POST"
+                            class="space-y-4"
+                        >
+                            @csrf
+                            <div class="flex flex-col gap-2">
+                                <input
+                                    type="text"
+                                    name="nickname"
+                                    class="rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
+                                    placeholder="暱稱"
+                                    maxlength="100"
+                                    required
+                                    value="{{ old('nickname') }}"
+                                />
+                                <textarea
+                                    type="text"
+                                    name="content"
+                                    class="flex-1 rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
+                                    placeholder="留言（審核後顯示）..."
+                                    maxlength="1000"
+                                    rows="5"
+                                    required
+                                >
 {{ old('content') }}</textarea
-                            >
-                        </div>
-                        <div>
-                            <x-cf-turnstile
-                                id="turnstile__store-comment"
-                                language="zh-tw"
-                                explicit
-                            />
-                        </div>
-                        <p class="text-xs text-warm-500">
-                            為避免垃圾留言，留言將由管理員審核後才會顯示出來。
-                        </p>
-                        <div class="flex items-center gap-2">
-                            <button
-                                type="submit"
-                                class="inline-flex items-center gap-1 rounded-lg bg-warm-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-warm-900 disabled:bg-gray-400"
-                                :disabled="! commentFormTurnstileChallengeExecuted"
-                            >
-                                <x-heroicon-o-chat-bubble-left class="size-4" />
-                                送出
-                            </button>
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
-                                @click="closeCommentModal()"
-                            >
-                                取消
-                            </button>
-                        </div>
-                    </form>
+                                >
+                            </div>
+                            <div>
+                                <x-cf-turnstile
+                                    id="turnstile__store-comment"
+                                    language="zh-tw"
+                                    explicit
+                                />
+                            </div>
+                            <p class="text-xs text-warm-500">
+                                為避免垃圾留言，留言將由管理員審核後才會顯示出來。
+                            </p>
+                            <div class="flex items-center gap-2">
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center gap-1 rounded-lg bg-warm-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-warm-900 disabled:bg-gray-400"
+                                    :disabled="! commentFormTurnstileChallengeExecuted"
+                                >
+                                    <x-heroicon-o-chat-bubble-left
+                                        class="size-4"
+                                    />
+                                    送出
+                                </button>
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 rounded-lg border border-warm-200 px-4 py-2 text-sm text-warm-700 transition hover:bg-warm-50"
+                                    @click="closeCommentModal()"
+                                >
+                                    取消
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            </template>
         </template>
 
         <script>
@@ -529,7 +521,6 @@
                     shouldShowMap: config.shouldShowMap,
                     mapTileLayer: config.mapTileLayer,
                     mapTileLayerAttribution: config.mapTileLayerAttribution,
-                    mapMarkerIconUrl: config.mapMarkerIconUrl,
                     showReportModal: false,
                     showCommentModal: false,
                     showMapSelectionModal: false,
@@ -571,13 +562,6 @@
                         }
 
                         this.mapInitialized = true
-
-                        const markerIcon = window.leaflet.icon({
-                            iconUrl: this.mapMarkerIconUrl,
-                            iconSize: [32, 32],
-                            iconAnchor: [16, 32],
-                            popupAnchor: [0, -32],
-                        })
 
                         this.map = window.leaflet
                             .map(this.$refs.mapContainer, {
