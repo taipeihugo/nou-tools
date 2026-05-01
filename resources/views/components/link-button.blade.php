@@ -9,8 +9,7 @@
     @if ($download)
         download
     @endif
-    class="{{ $getClasses() }}"
-    {{ $attributes }}
+    {{ $attributes->class($getClasses()) }}
 >
     {{ $slot }}
 </a>

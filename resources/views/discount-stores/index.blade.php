@@ -197,7 +197,7 @@
                             </div>
 
                             <div
-                                class="flex flex-col items-center justify-between md:flex-row"
+                                class="flex flex-col items-start justify-between md:flex-row md:items-center"
                             >
                                 <div class="min-w-0 flex-1 flex-col">
                                     <h3
@@ -224,6 +224,7 @@
                                 </div>
 
                                 <x-link-button
+                                    class="hidden! md:inline-flex!"
                                     :href="route('discount-stores.show', $store)"
                                     variant="secondary"
                                 >
@@ -233,7 +234,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="mb-4 md:mb-0">
                             @if ($store->latestReport === null)
                                 <span
                                     class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800"
@@ -264,6 +265,15 @@
                                 </span>
                             @endif
                         </div>
+
+                        <x-link-button
+                            class="flex! md:hidden!"
+                            :href="route('discount-stores.show', $store)"
+                            variant="secondary"
+                        >
+                            <x-heroicon-o-eye class="size-4" />
+                            檢視詳情
+                        </x-link-button>
                     </div>
                 </x-card>
             @empty
