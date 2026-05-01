@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
+use function Pest\Laravel\withoutVite;
 
 beforeEach(function () {
+    withoutVite();
     $this->category = DiscountStoreCategory::factory()->create();
 });
 
