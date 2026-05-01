@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Arr;
 use NouTools\Domains\DiscountStores\Actions\GeoCodeStoreAddress;
 
 class EditDiscountStore extends EditRecord
@@ -57,11 +58,18 @@ class EditDiscountStore extends EditRecord
     private function getGeoCodeAction(): Action
     {
         return Action::make('geoCoder')
-            ->label('使用 Nominatim 查詢座標')
+            ->label('使用地址查詢座標 (Nominatim)')
             ->icon('heroicon-o-map-pin')
             ->color('info')
-            ->action(function (DiscountStore $record): void {
-                $coordinates = app(GeoCodeStoreAddress::class)($record);
+            ->action(function (): void {
+                $formData = $this->data ?? [];
+
+                $storeForQuery = new DiscountStore;
+                $storeForQuery->city = Arr::get($formData, 'city');
+                $storeForQuery->district = Arr::get($formData, 'district');
+                $storeForQuery->address = Arr::get($formData, 'address');
+
+                $coordinates = app(GeoCodeStoreAddress::class)($storeForQuery);
 
                 if ($coordinates['latitude'] === null || $coordinates['longitude'] === null) {
                     Notification::make()
@@ -72,12 +80,16 @@ class EditDiscountStore extends EditRecord
                     return;
                 }
 
-                $record->update([
+                $this->form->fillPartially([
+                    ...$formData,
                     'latitude' => $coordinates['latitude'],
                     'longitude' => $coordinates['longitude'],
-                ]);
+                    'location' => [
+                        'lat' => $coordinates['latitude'],
+                        'lng' => $coordinates['longitude'],
+                    ],
+                ], ['latitude', 'longitude', 'location']);
 
-                $this->fillForm();
                 $this->dispatch('map-flyto', lat: $coordinates['latitude'], lng: $coordinates['longitude']);
                 Notification::make()
                     ->success()

@@ -104,15 +104,10 @@
                 @endif
 
                 @if ($store->type !== \App\Enums\DiscountStoreType::Online && filled($store->address) && $store->latitude !== null && $store->longitude !== null)
-                    <div class="space-y-2">
-                        <div
-                            x-ref="mapContainer"
-                            class="h-80 w-full rounded-lg border border-warm-100"
-                        ></div>
-                        <p class="text-xs text-warm-500">
-                            點擊上方地址以在不同地圖應用開啟此位置。
-                        </p>
-                    </div>
+                    <div
+                        x-ref="mapContainer"
+                        class="h-80 w-full rounded-lg border border-warm-100"
+                    ></div>
                 @endif
 
                 <div class="text-sm text-warm-700">

@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Http;
 
 final readonly class GeoCodeStoreAddress
 {
+    public function __construct(
+        private NormalizeStoreAddress $normalizeStoreAddress,
+    ) {}
+
     /**
      * Geocode a store's address using OpenStreetMap Nominatim service.
      *
@@ -22,11 +26,17 @@ final readonly class GeoCodeStoreAddress
         $query = $this->buildQuery($store);
 
         try {
-            $response = Http::timeout(10)->get('https://nominatim.openstreetmap.org/search', [
-                'format' => 'json',
-                'limit' => 1,
-                'q' => $query,
-            ]);
+            $response = Http::timeout(10)
+                ->connectTimeout(5)
+                ->acceptJson()
+                ->withHeaders([
+                    'User-Agent' => sprintf('%s geocoder', (string) config('app.name', 'nou-tools')),
+                ])
+                ->get('https://nominatim.openstreetmap.org/search', [
+                    'format' => 'jsonv2',
+                    'limit' => 1,
+                    'q' => $query,
+                ]);
 
             if (! $response->successful()) {
                 return ['latitude' => null, 'longitude' => null];
@@ -67,44 +77,9 @@ final readonly class GeoCodeStoreAddress
         }
 
         if ($store->address) {
-            $parts[] = $this->normalizeAddress($store);
+            $parts[] = ($this->normalizeStoreAddress)($store);
         }
 
         return implode(' ', $parts);
-    }
-
-    /**
-     * Normalize address by extracting road name with alleys/lanes and door number.
-     * Removes leading city/district if present, then extracts road + alleys + door number.
-     *
-     * Example: "台北市中正區中山路1巷2弄3號4樓之5" -> "中山路1巷2弄 3"
-     * Example: "中山路1巷2弄3號4樓之5" -> "中山路1巷2弄 3"
-     */
-    private function normalizeAddress(DiscountStore $store): string
-    {
-        $address = trim($store->address);
-
-        // Remove leading city and district if they exist in the address
-        if ($store->city && str_starts_with($address, $store->city)) {
-            $address = substr($address, strlen($store->city));
-        }
-
-        if ($store->district && str_starts_with($address, $store->district)) {
-            $address = substr($address, strlen($store->district));
-        }
-
-        $address = trim($address);
-
-        // Extract road + all alleys/lanes + door number
-        // Pattern: (road/alleys) + (door number) + 號
-        // Matches: 中山路1巷2弄 + 3 + 號, ignoring floors (4樓之5)
-        if (preg_match('/(.*?[路街](?:[0-9]+[巷弄])*)([0-9]+)號/', $address, $matches)) {
-            $roadAndAlleys = $matches[1];
-            $doorNumber = $matches[2];
-
-            return trim($roadAndAlleys.' '.$doorNumber);
-        }
-
-        return $address;
     }
 }
