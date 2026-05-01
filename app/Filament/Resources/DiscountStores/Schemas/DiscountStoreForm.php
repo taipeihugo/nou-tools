@@ -99,6 +99,7 @@ class DiscountStoreForm
                             ->label('地圖座標選擇')
                             ->columnSpanFull()
                             ->visible(fn (Get $get): bool => $get('type') !== DiscountStoreType::Online->value)
+                            ->defaultLocation(25.087137, 121.468801)
                             ->showMarker()
                             ->clickable(true)
                             ->draggable()

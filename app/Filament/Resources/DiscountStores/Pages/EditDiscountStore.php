@@ -78,6 +78,7 @@ class EditDiscountStore extends EditRecord
                 ]);
 
                 $this->fillForm();
+                $this->dispatch('map-flyto', lat: $coordinates['latitude'], lng: $coordinates['longitude']);
                 Notification::make()
                     ->success()
                     ->title(sprintf(
