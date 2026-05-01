@@ -440,7 +440,111 @@
                 title="考古題"
                 id="previous-exams"
             >
-                <div class="overflow-x-auto">
+                {{-- 手機：卡片列表 --}}
+                <div class="space-y-3 md:hidden">
+                    @foreach ($previousExams as $exam)
+                        <div
+                            class="rounded-lg border border-warm-200 bg-white p-4"
+                        >
+                            <div class="mb-3 font-semibold text-warm-900">
+                                {{ $exam->term ?? '-' }}
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <p class="mb-1 font-semibold text-warm-600">
+                                        期中考正參
+                                    </p>
+                                    @if ($exam->midterm_reference_primary)
+                                        <x-link-button
+                                            href="https://noustud.nou.edu.tw/shared_tmp/work/exa/refans/{{ $exam->midterm_reference_primary }}"
+                                            variant="link"
+                                            target="_blank"
+                                            rel="noopener"
+                                            aria-label="{{ $exam->term }}的期中考正參"
+                                        >
+                                            正參
+                                            <x-heroicon-o-arrow-top-right-on-square
+                                                class="size-4"
+                                            />
+                                        </x-link-button>
+                                    @else
+                                        <span class="text-warm-500">—</span>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <p class="mb-1 font-semibold text-warm-600">
+                                        期中考副參
+                                    </p>
+                                    @if ($exam->midterm_reference_secondary)
+                                        <x-link-button
+                                            href="https://noustud.nou.edu.tw/shared_tmp/work/exa/refans/{{ $exam->midterm_reference_secondary }}"
+                                            variant="link"
+                                            target="_blank"
+                                            rel="noopener"
+                                            aria-label="{{ $exam->term }}的期中考副參"
+                                        >
+                                            副參
+                                            <x-heroicon-o-arrow-top-right-on-square
+                                                class="size-4"
+                                            />
+                                        </x-link-button>
+                                    @else
+                                        <span class="text-warm-500">—</span>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <p class="mb-1 font-semibold text-warm-600">
+                                        期末考正參
+                                    </p>
+                                    @if ($exam->final_reference_primary)
+                                        <x-link-button
+                                            href="https://noustud.nou.edu.tw/shared_tmp/work/exa/refans/{{ $exam->final_reference_primary }}"
+                                            variant="link"
+                                            target="_blank"
+                                            rel="noopener"
+                                            aria-label="{{ $exam->term }}的期末考正參"
+                                        >
+                                            正參
+                                            <x-heroicon-o-arrow-top-right-on-square
+                                                class="size-4"
+                                            />
+                                        </x-link-button>
+                                    @else
+                                        <span class="text-warm-500">—</span>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <p class="mb-1 font-semibold text-warm-600">
+                                        期末考副參
+                                    </p>
+                                    @if ($exam->final_reference_secondary)
+                                        <x-link-button
+                                            href="https://noustud.nou.edu.tw/shared_tmp/work/exa/refans/{{ $exam->final_reference_secondary }}"
+                                            variant="link"
+                                            target="_blank"
+                                            rel="noopener"
+                                            aria-label="{{ $exam->term }}的期末考副參"
+                                        >
+                                            副參
+                                            <x-heroicon-o-arrow-top-right-on-square
+                                                class="size-4"
+                                            />
+                                        </x-link-button>
+                                    @else
+                                        <span class="text-warm-500">—</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- 桌面：維持表格，但只在 md+ 顯示 --}}
+                <div class="hidden overflow-x-auto md:block">
                     <x-table caption="考古題">
                         <x-table-head>
                             <x-table-row>
@@ -480,7 +584,7 @@
                                                 rel="noopener"
                                                 aria-label="{{ $exam->term }}的期中考正參"
                                             >
-                                                正參考
+                                                正參
                                                 <x-heroicon-o-arrow-top-right-on-square
                                                     class="size-4"
                                                 />
@@ -498,7 +602,7 @@
                                                 rel="noopener"
                                                 aria-label="{{ $exam->term }}的期中考副參"
                                             >
-                                                副參考
+                                                副參
                                                 <x-heroicon-o-arrow-top-right-on-square
                                                     class="size-4"
                                                 />
@@ -516,7 +620,7 @@
                                                 rel="noopener"
                                                 aria-label="{{ $exam->term }}的期末考正參"
                                             >
-                                                正參考
+                                                正參
                                                 <x-heroicon-o-arrow-top-right-on-square
                                                     class="size-4"
                                                 />
@@ -534,7 +638,7 @@
                                                 rel="noopener"
                                                 aria-label="{{ $exam->term }}的期末考副參"
                                             >
-                                                副參考
+                                                副參
                                                 <x-heroicon-o-arrow-top-right-on-square
                                                     class="size-4"
                                                 />
