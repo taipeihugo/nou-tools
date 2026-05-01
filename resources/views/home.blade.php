@@ -100,8 +100,9 @@
                                         'evening' => '夜間班',
                                         'full_remote' => '全遠距',
                                         'micro_credit' => '微學分',
+                                        'other' => '其他',
                                     ];
-                                    $grouped = $course->classes->groupBy('type');
+                                    $grouped = $course->classes->groupBy(fn ($class) => in_array($class->type, array_keys($typeLabels)) ? $class->type : 'other');
                                 @endphp
 
                                 @foreach ($typeLabels as $typeKey => $label)
@@ -188,91 +189,6 @@
                                         </div>
                                     @endif
                                 @endforeach
-
-                                @php
-                                    $known = array_keys($typeLabels);
-                                    $others = $grouped->reject(function ($group, $key) use ($known) {
-                                        return in_array($key, $known);
-                                    });
-                                @endphp
-
-                                @if ($others->isNotEmpty())
-                                    <div class="mb-4">
-                                        <div
-                                            class="mb-2 text-sm font-semibold text-warm-700"
-                                        >
-                                            其他
-                                        </div>
-                                        <div
-                                            class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
-                                        >
-                                            @foreach ($others as $otherGroup)
-                                                @php
-                                                    $timeGroups = $otherGroup->groupBy(function ($c) {
-                                                        return $c->start_time ? $c->start_time . ' - ' . $c->end_time : '時間未定';
-                                                    });
-                                                @endphp
-
-                                                @foreach ($timeGroups as $timeLabel => $classesAtTime)
-                                                    <div
-                                                        class="rounded border bg-white p-3"
-                                                    >
-                                                        <div
-                                                            class="mb-3 text-sm font-medium text-warm-600"
-                                                        >
-                                                            {{ $timeLabel }}
-                                                        </div>
-
-                                                        <div
-                                                            class="flex w-full gap-2"
-                                                        >
-                                                            @foreach ($classesAtTime as $courseClass)
-                                                                @if ($courseClass->link)
-                                                                    <a
-                                                                        href="{{ $courseClass->link }}"
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        class="block w-full rounded border border-orange-200 bg-orange-50 px-4 py-3 text-left text-orange-700 transition hover:bg-orange-100"
-                                                                    >
-                                                                        <div
-                                                                            class="text-lg font-semibold"
-                                                                        >
-                                                                            {{ $courseClass->code ?? '—' }}
-                                                                        </div>
-                                                                        @if ($courseClass->teacher_name)
-                                                                            <div
-                                                                                class="mt-1 truncate text-sm text-warm-600"
-                                                                            >
-                                                                                {{ $courseClass->teacher_name }}
-                                                                            </div>
-                                                                        @endif
-                                                                    </a>
-                                                                @else
-                                                                    <div
-                                                                        class="block w-full rounded border bg-gray-50 px-4 py-3 text-left text-warm-500"
-                                                                    >
-                                                                        <div
-                                                                            class="text-lg font-semibold"
-                                                                        >
-                                                                            {{ $courseClass->code ?? '—' }}
-                                                                        </div>
-                                                                        @if ($courseClass->teacher_name)
-                                                                            <div
-                                                                                class="mt-1 truncate text-sm text-warm-600"
-                                                                            >
-                                                                                {{ $courseClass->teacher_name }}
-                                                                            </div>
-                                                                        @endif
-                                                                    </div>
-                                                                @endif
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     @endforeach
