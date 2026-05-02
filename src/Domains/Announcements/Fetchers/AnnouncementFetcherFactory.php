@@ -13,6 +13,7 @@ final readonly class AnnouncementFetcherFactory
             AnnouncementFetcherType::JSON_API => new JsonApiFetcher,
             AnnouncementFetcherType::HTML_SCRAPE => new HtmlScrapeFetcher,
             AnnouncementFetcherType::HTML_NEWS_BOX => new HtmlNewsBoxFetcher,
+            AnnouncementFetcherType::SCHOOL_HP => new SchoolHpFetcher,
         };
     }
 }

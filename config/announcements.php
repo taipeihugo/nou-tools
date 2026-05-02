@@ -4,6 +4,17 @@ use App\Enums\AnnouncementFetcherType;
 
 return [
     'sources' => [
+        'school-homepage-latest-news' => [
+            'name' => '學校首頁',
+            'category' => '最新消息',
+            'fetch_url' => 'https://www.nou.edu.tw/news1.aspx',
+            'fetcher_type' => AnnouncementFetcherType::SCHOOL_HP->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www.nou.edu.tw',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
         'academic-affairs-course-selection' => [
             'name' => '教務處',
             'category' => '註冊選課',
