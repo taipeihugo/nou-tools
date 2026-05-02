@@ -15,6 +15,8 @@ return [
             'tracks_expiry' => false,
             'is_active' => true,
         ],
+
+        // region 各處室
         'academic-affairs-course-selection' => [
             'name' => '教務處',
             'category' => '註冊選課',
@@ -158,6 +160,234 @@ return [
             'tracks_expiry' => true,
             'is_active' => true,
         ],
+        // endregion
+
+        // region 學系
+
+        'humanity-department-latest-news' => [
+            'name' => '人文學系',
+            'category' => '最新消息',
+            'fetch_url' => 'https://www2.nou.edu.tw/humanity/doclist.aspx?uid=4718&pid=4709',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/humanity',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'humanity-department-important-announcements' => [
+            'name' => '人文學系',
+            'category' => '重要公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/humanity/List.aspx?uid=4719&pid=4709',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/humanity',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'humanity-department-activities' => [
+            'name' => '人文學系',
+            'category' => '學系活動',
+            'fetch_url' => 'https://www2.nou.edu.tw/humanity/List.aspx?uid=6249&pid=4709',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/humanity',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'humanity-department-general-announcements' => [
+            'name' => '人文學系',
+            'category' => '一般公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/humanity/List.aspx?uid=6250&pid=4709',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/humanity',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'humanity-department-exam-news' => [
+            'name' => '人文學系',
+            'category' => '考試消息',
+            'fetch_url' => 'https://www2.nou.edu.tw/humanity/List.aspx?uid=4710&pid=4709',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/humanity',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'social-sciences-department-latest-news' => [
+            'name' => '社會科學系',
+            'category' => '最新消息',
+            'fetch_url' => 'https://www2.nou.edu.tw/social/List.aspx?uid=4576&pid=4575',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/social',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'social-sciences-department-important-announcements' => [
+            'name' => '社會科學系',
+            'category' => '重要公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/social/List.aspx?uid=4584&pid=4575',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/social',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'business-department-live-updates' => [
+            'name' => '商學系',
+            'category' => '即時訊息',
+            'fetch_url' => 'https://www2.nou.edu.tw/business/doclist.aspx?uid=3938&pid=3937',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/business',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'business-department-administrative-announcements' => [
+            'name' => '商學系',
+            'category' => '行政公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/business/List.aspx?uid=3946&pid=3937',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/business',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'public-administration-department-activities' => [
+            'name' => '公共行政學系',
+            'category' => '學系活動',
+            'fetch_url' => 'https://www2.nou.edu.tw/pa/List.aspx?uid=3279&pid=3270',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/pa',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'public-administration-department-admissions-news' => [
+            'name' => '公共行政學系',
+            'category' => '招生訊息',
+            'fetch_url' => 'https://www2.nou.edu.tw/pa/List.aspx?uid=3280&pid=3270',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/pa',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'public-administration-department-announcements' => [
+            'name' => '公共行政學系',
+            'category' => '系所公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/pa/List.aspx?uid=3271&pid=3270',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/pa',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'public-administration-department-other-announcements' => [
+            'name' => '公共行政學系',
+            'category' => '其他公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/pa/List.aspx?uid=4601&pid=3270',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/pa',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'living-sciences-department-latest-news' => [
+            'name' => '生活科學系',
+            'category' => '最新消息',
+            'fetch_url' => 'https://www2.nou.edu.tw/living/List.aspx?uid=3743&pid=3742',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/living',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'living-sciences-department-announcements' => [
+            'name' => '生活科學系',
+            'category' => '系公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/living/List.aspx?uid=3751&pid=3742',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/living',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'living-sciences-department-activity-albums' => [
+            'name' => '生活科學系',
+            'category' => '活動相簿',
+            'fetch_url' => 'https://www2.nou.edu.tw/living/albumList.aspx?album=249&uid=3746&pid=3742',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/living',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'management-and-information-department-bulletin' => [
+            'name' => '管理與資訊學系',
+            'category' => '公布欄',
+            'fetch_url' => 'https://www2.nou.edu.tw/mi/doclist.aspx?uid=6059&pid=6058',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/mi',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'liberal-education-center-latest-news' => [
+            'name' => '通識博雅教育中心',
+            'category' => '中心最新消息',
+            'fetch_url' => 'https://www2.nou.edu.tw/nouod/List.aspx?uid=4736&pid=4735',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/nouod',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'liberal-education-center-course-announcements' => [
+            'name' => '通識博雅教育中心',
+            'category' => '課程公告',
+            'fetch_url' => 'https://www2.nou.edu.tw/nouod/List.aspx?uid=4744&pid=4735',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/nouod',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+        'liberal-education-center-admissions-news' => [
+            'name' => '通識博雅教育中心',
+            'category' => '招生訊息',
+            'fetch_url' => 'https://www2.nou.edu.tw/nouod/List.aspx?uid=4992&pid=4735',
+            'fetcher_type' => AnnouncementFetcherType::HTML_SCRAPE->value,
+            'fetcher_config' => [
+                'base_url' => 'https://www2.nou.edu.tw/nouod',
+            ],
+            'tracks_expiry' => false,
+            'is_active' => true,
+        ],
+
+        // endregion
+
+        // region 學習指導中心
         'keelung-center-latest-news' => [
             'name' => '基隆中心',
             'category' => '最新消息',
@@ -895,5 +1125,6 @@ return [
             'tracks_expiry' => false,
             'is_active' => true,
         ],
+        // endregion
     ],
 ];
