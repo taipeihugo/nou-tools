@@ -245,7 +245,7 @@
                             name="discount_details"
                             rows="3"
                             class="w-full rounded-lg border border-warm-200 px-3 py-2 text-sm focus:border-orange-300 focus:ring-orange-300"
-                            placeholder="描述具體的優惠內容..."
+                            placeholder="描述詳細的優惠內容..."
                         >
 {{ old('discount_details') }}</textarea
                         >
